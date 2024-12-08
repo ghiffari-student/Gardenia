@@ -1,29 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/src/core/images.dart';
 import 'package:myapp/src/models/post_model.dart';
 import 'package:myapp/src/models/user_model.dart';
 import 'package:myapp/src/pages/login_screen.dart';
+import 'package:myapp/src/services/auth_service.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final User user;
+  const ProfileScreen({super.key, required this.user});
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // Dummy user data
-  final User _user = User(
-      id: 1,
-      username: 'Ghiffari',
-      email: 'ghiffari@gmail.com',
-      bio: 'Pecinta tanaman sejati, dari kaktus sampai anggrek',
-      profilePicture:
-          'https://fastly.picsum.photos/id/27/3264/1836.jpg?hmac=p3BVIgKKQpHhfGRRCbsi2MCAzw8mWBCayBsKxxtWO8g',
-      createdAt: DateTime.now().subtract(const Duration(days: 30)));
-
   // Dummy posts
   final List<Post> _userPosts = [
     Post(
+        user: User(id: 1, username: "asdasd", email: ""),
         id: 1,
         userId: 1,
         title: 'Koleksi Kaktus Baru',
@@ -32,6 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             'https://fastly.picsum.photos/id/25/5000/3333.jpg?hmac=yCz9LeSs-i72Ru0YvvpsoECnCTxZjzGde805gWrAHkM',
         viewsCount: 15),
     Post(
+        user: User(id: 1, username: "", email: ""),
         id: 2,
         userId: 1,
         title: 'Perawatan Anggrek',
@@ -52,6 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: const Icon(Icons.logout),
             onPressed: () {
               // Logout dan kembali ke login screen
+              AuthService().logout();
               Navigator.pop(context);
               Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => const LoginScreen()));
@@ -69,24 +65,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   CircleAvatar(
                     radius: 60,
-                    backgroundImage: NetworkImage(_user.profilePicture ?? ''),
+                    backgroundImage: AssetImage(noProfileImage),
                     backgroundColor: Colors.green[100],
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    _user.username,
+                    widget.user.username,
                     style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: Colors.green[800]),
                   ),
                   Text(
-                    _user.email,
+                    widget.user.email,
                     style: TextStyle(color: Colors.green[600]),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    _user.bio ?? '',
+                    widget.user.bio ?? '',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.green[700]),
                   ),

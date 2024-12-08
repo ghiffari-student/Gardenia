@@ -1,40 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:myapp/src/pages/home_screen.dart';
-import 'package:myapp/src/pages/register_screen.dart';
+import 'package:myapp/src/pages/login_screen.dart';
 import 'package:myapp/src/services/auth_service.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _authService = AuthService();
   bool _isLoading = false;
 
-  void _login() async {
+  void _register() async {
     setState(() => _isLoading = true);
 
-    final user = await _authService.login(
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-    );
+    final response = await _authService.register(
+        email: _emailController.text,
+        password: _passwordController.text,
+        username: _usernameController.text);
 
     setState(() => _isLoading = false);
 
-    if (user != null) {
+    if (response) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Login gagal. Periksa kredensial Anda.'),
+          content: Text('Register gagal.'),
           backgroundColor: Colors.red,
         ),
       );
@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SingleChildScrollView(
         child: Container(
           constraints:
-              BoxConstraints(minHeight: MediaQuery.sizeOf(context).height),
+              BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height),
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -64,6 +64,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 30),
+              TextField(
+                controller: _usernameController,
+                decoration: InputDecoration(
+                  labelText: 'Username',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 15),
               TextField(
                 controller: _emailController,
                 decoration: InputDecoration(
@@ -88,22 +98,22 @@ class _LoginScreenState extends State<LoginScreen> {
               _isLoading
                   ? const CircularProgressIndicator()
                   : ElevatedButton(
-                      onPressed: _login,
+                      onPressed: _register,
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 50),
                         backgroundColor: Colors.green[700],
                       ),
-                      child: const Text('Login'),
+                      child: const Text('Register'),
                     ),
               const SizedBox(height: 15),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
                   );
                 },
                 child: Text(
-                  'Buat akun baru',
+                  'Sudah punya akun ? Login',
                   style: TextStyle(color: Colors.green[800]),
                 ),
               ),
